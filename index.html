@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EMPIRE SPORT — How to Order</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-teal: #083335;
+      --deep-black: #010A0B;
+      --pure-white: #FFFFFF;
+      --accent-gold: #E6C387;
+      --font-main: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      font-family: var(--font-main);
+      color: var(--pure-white);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Exact 9:16 Mobile Stage for Reels */
+    .mobile-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 430px;
+      max-height: 932px;
+      aspect-ratio: 9 / 16;
+      background: radial-gradient(circle at 50% 45%, #0d4648 0%, var(--primary-teal) 55%, var(--deep-black) 100%);
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 70px 20px 40px 20px;
+    }
+
+    @media (min-width: 500px) and (min-height: 800px) {
+      .mobile-stage {
+        width: 430px;
+        height: 764px;
+        border-radius: 32px;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+      }
+    }
+
+    /* Dynamic Particles Canvas */
+    .bg-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Texture & Vignette Overlay */
+    .texture-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 50% 50%, transparent 35%, rgba(0,0,0,0.85) 100%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 35px 35px, 35px 35px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: absolute;
+      top: 24px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .brand-mini-tag {
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      opacity: 0.9;
+    }
+
+    /* Header Section */
+    .order-header {
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .order-header.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .order-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .order-title {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Order Steps Container */
+    .steps-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: auto 0;
+    }
+
+    .step-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      padding: 16px 14px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: right;
+      opacity: 0;
+      transform: translateY(25px) scale(0.96);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-card.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--pure-white);
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .step-desc {
+      font-size: 0.8rem;
+      font-weight: 600;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    /* Contact Links Section */
+    .contact-buttons-box {
+      z-index: 10;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .contact-buttons-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 30px;
+      text-decoration: none;
+      color: var(--pure-white);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease;
+    }
+
+    .contact-btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-left-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-icon-svg {
+      width: 24px;
+      height: 24px;
+      fill: #FFFFFF;
+    }
+
+    .btn-text {
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .btn-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-stage">
+    
+    <!-- Background Canvas Particles -->
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    <div class="texture-overlay"></div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="brand-mini-tag">EMPIRE SPORT</div>
+    </div>
+
+    <!-- Header -->
+    <div class="order-header" id="orderHeader">
+      <div class="order-tag">خطوات سهلة وسريعة</div>
+      <h1 class="order-title">كيفية الطلب والمراسلة</h1>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-container">
+      
+      <!-- Step 1 -->
+      <div class="step-card" id="step1">
+        <div class="step-number">1</div>
+        <div>
+          <div class="step-title">اختر التيشرت المناسب</div>
+          <div class="step-desc">من الريلز أو البوستات المعروضة في صفحتنا.</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card" id="step2">
+        <div class="step-number">2</div>
+        <div>
+          <div class="step-title">جهّز تفاصيل طلبك</div>
+          <div class="step-desc">التقط صورة للتيشرت وحدد المقاس المطلوبة.</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card" id="step3">
+        <div class="step-number">3</div>
+        <div>
+          <div class="step-title">أرسلها إلينا مباشرة</div>
+          <div class="step-desc">عبر الواتساب أو إنستغرام لخدمتك فوراً.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Contact Buttons -->
+    <div class="contact-buttons-box" id="contactBtns">
+      
+      <!-- WhatsApp Link -->
+      <a href="https://wa.me/967774260007" target="_blank" class="contact-btn">
+        <div class="btn-left-content">
+          <svg class="btn-icon-svg" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          <span class="btn-text">الواتسـاب</span>
+        </div>
+        <span class="btn-badge">774260007</span>
+      </a>
+
+      <!-- Instagram Link -->
+      <a href="https://instagram.com/empiresport.ye" target="_blank" class="contact-btn">
+        <div class="btn-left-content">
+          <svg class="btn-icon-svg" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          <span class="btn-text">إنستغـرام</span>
+        </div>
+        <span class="btn-badge">empiresport.ye</span>
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* Canvas Particles Background */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.3;
+        this.speedY = -(Math.random() * 0.4 + 0.1);
+        this.opacity = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        this.y += this.speedY;
+        if (this.y < 0) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 45; i++) particles.push(new Particle());
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+
+    /* Sequential Animation Controller */
+    let timers = [];
+
+    function addTimer(fn, delay) {
+      timers.push(setTimeout(fn, delay));
+    }
+
+    function startAnimation() {
+      timers.forEach(t => clearTimeout(t));
+      timers = [];
+
+      document.getElementById('orderHeader').classList.remove('show');
+      document.getElementById('step1').classList.remove('show');
+      document.getElementById('step2').classList.remove('show');
+      document.getElementById('step3').classList.remove('show');
+      document.getElementById('contactBtns').classList.remove('show');
+
+      addTimer(() => document.getElementById('orderHeader').classList.add('show'), 300);
+      addTimer(() => document.getElementById('step1').classList.add('show'), 900);
+      addTimer(() => document.getElementById('step2').classList.add('show'), 1600);
+      addTimer(() => document.getElementById('step3').classList.add('show'), 2300);
+      addTimer(() => document.getElementById('contactBtns').classList.add('show'), 3000);
+
+      // Loop after display for easy recording
+      addTimer(() => startAnimation(), 9000);
+    }
+
+    window.addEventListener('DOMContentLoaded', startAnimation);
+  </script>
+</body>
+</html>
